@@ -25,7 +25,6 @@ Source10:	%{name}.16.xpm.bz2
 Source11:	%{name}.32.xpm.bz2
 Source12:	%{name}.48.xpm.bz2
 URL:		http://xaos.theory.org/
-Packager:	Guillaume Cottenceau <gc@mandrakesoft.com>
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 ExclusiveArch:	%{ix86} ppc x86_64
 Obsoletes:	XaoS
