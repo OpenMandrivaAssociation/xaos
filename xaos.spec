@@ -16,7 +16,6 @@ Patch2:		XaoS-3.1pre1-64bit-fixes.patch.bz2
 Patch3:		XaoS-3.1-x11shm-errors.patch.bz2
 Patch4:		XaoS-3.1-xlibs-path.patch.bz2
 Source0:	http://belnet.dl.sourceforge.net/sourceforge/xaos/XaoS-%{version}.tar.bz2
-Source1:	xaos
 Source10:	%{name}.16.xpm.bz2
 Source11:	%{name}.32.xpm.bz2
 Source12:	%{name}.48.xpm.bz2
@@ -102,11 +101,19 @@ install -m755 xaos-svgalib $RPM_BUILD_ROOT%{_bindir}
 %endif
 install -m644 help/xaos.hlp $RPM_BUILD_ROOT%{_datadir}/XaoS/catalogs
 
-# menu entry
-install -m 755 -d $RPM_BUILD_ROOT%{_menudir}
-install -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_menudir}/
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
+cat > $RPM_BUILD_ROOT%{_datadir}/applications/mandriva-%{name}.desktop << EOF
+[Desktop Entry]
+Encoding=UTF-8
+Name=XaoS
+Comment=Realtime fractal zoomer
+Exec=%{name}
+Icon=%{name}
+Terminal=false
+Type=Application
+Categories=X-MandrivaLinux-MoreApplications-Sciences-Mathematics;Science;Math;
+EOF
 
-# icon
 mkdir -p $RPM_BUILD_ROOT%{_miconsdir}
 mkdir -p $RPM_BUILD_ROOT%{_liconsdir}
 bzcat %{SOURCE10} > $RPM_BUILD_ROOT%{_miconsdir}/%{name}.xpm
@@ -136,7 +143,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/XaoS
 %{_mandir}/man6/*
 %{_infodir}/xaos*
-%{_menudir}/*
+%{_datadir}/applications/mandriva-%{name}.desktop
 %{_miconsdir}/%{name}.xpm
 %{_iconsdir}/%{name}.xpm
 %{_liconsdir}/%{name}.xpm
