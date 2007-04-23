@@ -4,10 +4,6 @@
 
 %define build_aalib	1
 %define build_svgalib	1
-%ifarch x86_64
-%define build_aalib	0
-%define build_svgalib	0
-%endif
 
 Summary:	A real-time fractal zoomer
 Name:		%{name}
