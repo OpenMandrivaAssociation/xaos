@@ -11,6 +11,7 @@ Version:	%{version}
 Release:	%{release}
 License:	GPL
 Group:		Sciences/Mathematics
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: autoconf2.5 X11-devel libpng-devel zlib-devel aalib-devel gpm-devel ncurses-devel slang
 Patch2:		XaoS-3.1pre1-64bit-fixes.patch.bz2
 Patch3:		XaoS-3.1-x11shm-errors.patch.bz2
