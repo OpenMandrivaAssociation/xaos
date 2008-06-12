@@ -125,14 +125,18 @@ bzcat %{SOURCE12} > $RPM_BUILD_ROOT%{_liconsdir}/%{name}.xpm
 rm -rf $RPM_BUILD_ROOT
 
 %post
+%if %mdkversion < 200900
 %{update_menus}
+%endif
 %_install_info xaos.info
 
 %preun
 %_remove_install_info xaos.info
 
+%if %mdkversion < 200900
 %postun
 %{clean_menus}
+%endif
 
 
 %files -f %{name}.lang
