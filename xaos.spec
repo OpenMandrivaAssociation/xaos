@@ -1,6 +1,6 @@
 %define name	xaos
 %define version	3.2.3
-%define release %mkrel 2
+%define release %mkrel 4
 
 %define build_aalib	1
 %define build_svgalib	1
