@@ -1,5 +1,5 @@
 %define name	xaos
-%define version	3.2.3
+%define version	3.5
 %define release %mkrel 4
 
 %define build_aalib	1
@@ -9,17 +9,15 @@ Summary:	A real-time fractal zoomer
 Name:		%{name}
 Version:	%{version}
 Release:	%{release}
-License:	GPL
+License:	GPLv2+
 Group:		Sciences/Mathematics
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires: autoconf2.5 X11-devel libpng-devel zlib-devel aalib-devel gpm-devel ncurses-devel slang
-Patch2:		XaoS-3.1pre1-64bit-fixes.patch.bz2
-Patch3:		XaoS-3.1-x11shm-errors.patch.bz2
-Patch4:		XaoS-3.1-xlibs-path.patch.bz2
-Source0:	http://belnet.dl.sourceforge.net/sourceforge/xaos/XaoS-%{version}.tar.bz2
-Source10:	%{name}.16.xpm.bz2
-Source11:	%{name}.32.xpm.bz2
-Source12:	%{name}.48.xpm.bz2
+Patch0:		xaos-3.5-format-string.patch
+Source0:	http://downloads.sourceforge.net/sourceforge/%{name}/%{name}-%{version}.tar.gz
+Source10:	%{name}.16.xpm
+Source11:	%{name}.32.xpm
+Source12:	%{name}.48.xpm
 URL:		http://xaos.theory.org/
 ExclusiveArch:	%{ix86} ppc x86_64
 Obsoletes:	XaoS
@@ -57,18 +55,14 @@ advanced help system and nice tutorial about a lot different fractals.
 This package holds (only) the binary that runs with aalib. (Ascii-Art)
 
 %prep
-%setup -q -n XaoS-%{version}
-%patch2 -p1 -b .64bit-fixes
-%patch3 -p0 -b .x11shm-errors
-%patch4 -p0 -b .xlibs-path
-autoconf
+%setup -q
+%patch0 -p1 -b .strfmt
 
-%build
-BUILD_TAG=""
+CFLAGS=$(echo %optflags | sed -e "s/-O2/-O3 -malign-double -fstrict-aliasing -ffast-math/")
 
 %if %{build_aalib}
 rm -f config.cache
-%configure2_5x --without-x11-driver --without-ggi-driver --without-svga-driver --with-aa-driver
+%configure2_5x --without-x11-driver --without-ggi-driver --without-svga-driver --with-aa-driver 
 make
 mv bin/xaos ./xaos-aalib
 BUILD_TAG=yes
@@ -77,7 +71,7 @@ BUILD_TAG=yes
 %if %{build_svgalib}
 [[ -n "$BUILD_TAG" ]] && { make clean; BUILD_TAG=""; }
 rm -f config.cache
-%configure2_5x --without-x11-driver --without-ggi-driver --with-svga-driver --without-aa-driver
+%configure2_5x --without-x11-driver --without-ggi-driver --with-svga-driver --without-aa-driver 
 make
 mv bin/xaos ./xaos-svgalib
 BUILD_TAG=yes
@@ -89,20 +83,20 @@ rm -f config.cache
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT%{_infodir}
-%makeinstall LOCALEDIR=$RPM_BUILD_ROOT%{_datadir}/locale
+rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_infodir}
+%makeinstall LOCALEDIR=%{buildroot}%{_datadir}/locale
 
 %if %{build_aalib}
-install -m755 xaos-aalib $RPM_BUILD_ROOT%{_bindir}
+install -m755 xaos-aalib %{buildroot}%{_bindir}
 %endif
 %if %{build_svgalib}
-install -m755 xaos-svgalib $RPM_BUILD_ROOT%{_bindir}
+install -m755 xaos-svgalib %{buildroot}%{_bindir}
 %endif
-install -m644 help/xaos.hlp $RPM_BUILD_ROOT%{_datadir}/XaoS/catalogs
+install -m644 help/xaos.hlp %{buildroot}%{_datadir}/XaoS/catalogs
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/applications
-cat > $RPM_BUILD_ROOT%{_datadir}/applications/mandriva-%{name}.desktop << EOF
+mkdir -p %{buildroot}%{_datadir}/applications
+cat > %{buildroot}%{_datadir}/applications/mandriva-%{name}.desktop << EOF
 [Desktop Entry]
 Name=XaoS
 Comment=Realtime fractal zoomer
@@ -110,19 +104,19 @@ Exec=%{name}
 Icon=%{name}
 Terminal=false
 Type=Application
-Categories=X-MandrivaLinux-MoreApplications-Sciences-Mathematics;Science;Math;
+Categories=Education;Science;Math;
 EOF
 
-mkdir -p $RPM_BUILD_ROOT%{_miconsdir}
-mkdir -p $RPM_BUILD_ROOT%{_liconsdir}
-bzcat %{SOURCE10} > $RPM_BUILD_ROOT%{_miconsdir}/%{name}.xpm
-bzcat %{SOURCE11} > $RPM_BUILD_ROOT%{_iconsdir}/%{name}.xpm
-bzcat %{SOURCE12} > $RPM_BUILD_ROOT%{_liconsdir}/%{name}.xpm
+mkdir -p %{buildroot}%{_miconsdir}
+mkdir -p %{buildroot}%{_liconsdir}
+cp %{SOURCE10} %{buildroot}%{_miconsdir}/%{name}.xpm
+cp %{SOURCE11} %{buildroot}%{_iconsdir}/%{name}.xpm
+cp %{SOURCE12} %{buildroot}%{_liconsdir}/%{name}.xpm
 
 %find_lang %{name}
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %post
 %if %mdkversion < 200900
@@ -141,7 +135,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(-,root,root,0755)
-%doc COPYING TODO doc/PROBLEMS doc/README doc/README.bugs doc/compilers.txt
+%doc NEWS AUTHORS README
 %{_bindir}/xaos
 %{_datadir}/XaoS
 %{_mandir}/man6/*
