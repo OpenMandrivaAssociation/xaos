@@ -1,6 +1,6 @@
 %define name	xaos
 %define version	3.5
-%define release %mkrel 5
+%define release %mkrel 6
 
 %define build_aalib	1
 
@@ -24,7 +24,7 @@ Source12:	%{name}.48.xpm
 URL:		http://xaos.theory.org/
 Obsoletes:	XaoS < %{version}-%{release}
 Provides:	XaoS = %{version}-%{release}
-Obsoletes:	%{name}-svgalib < %{version}-%{release}
+Obsoletes:	%{name}-svgalib < %{epoch}:%{version}-%{release}
 Epoch:		1
 
 %description
