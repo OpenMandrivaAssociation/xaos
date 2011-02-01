@@ -1,9 +1,8 @@
 %define name	xaos
 %define version	3.5
-%define release %mkrel 4
+%define release %mkrel 5
 
 %define build_aalib	1
-%define build_svgalib	1
 
 Summary:	A real-time fractal zoomer
 Name:		%{name}
@@ -12,16 +11,20 @@ Release:	%{release}
 License:	GPLv2+
 Group:		Sciences/Mathematics
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
-BuildRequires: autoconf2.5 X11-devel libpng-devel zlib-devel aalib-devel gpm-devel ncurses-devel slang
+BuildRequires:	libx11-devel
+BuildRequires:	libxext-devel
+BuildRequires:	libgsl-devel
+BuildRequires:	libpng-devel
+BuildRequires:	aalib-devel
 Patch0:		xaos-3.5-format-string.patch
 Source0:	http://downloads.sourceforge.net/sourceforge/%{name}/%{name}-%{version}.tar.gz
 Source10:	%{name}.16.xpm
 Source11:	%{name}.32.xpm
 Source12:	%{name}.48.xpm
 URL:		http://xaos.theory.org/
-ExclusiveArch:	%{ix86} ppc x86_64
-Obsoletes:	XaoS
+Obsoletes:	XaoS < %{version}-%{release}
 Provides:	XaoS = %{version}-%{release}
+Obsoletes:	%{name}-svgalib < %{version}-%{release}
 Epoch:		1
 
 %description
@@ -30,22 +33,10 @@ advanced help system and nice tutorial about a lot different fractals.
 
 This package holds the binary that runs with X11.
 
-%package svgalib
-Summary: Real-time fractal zoomer, svgalib package
-Group: Sciences/Mathematics
-Obsoletes: XaoS-svgalib
-Provides: XaoS-svgalib = %{version}-%{release}
-
-%description svgalib
-XaoS is a real-time fractal zoomer. It is highly optimized. It features an
-advanced help system and nice tutorial about a lot different fractals.
-
-This package holds (only) the binary that runs with svgalib.
-
 %package aalib
 Summary: Real-time fractal zoomer, aalib package
 Group: Sciences/Mathematics
-Obsoletes: XaoS-aalib
+Obsoletes: XaoS-aalib < %{version}-%{release}
 Provides: XaoS-aalib = %{version}-%{release}
 
 %description aalib
@@ -62,25 +53,16 @@ CFLAGS=$(echo %optflags | sed -e "s/-O2/-O3 -malign-double -fstrict-aliasing -ff
 
 %if %{build_aalib}
 rm -f config.cache
-%configure2_5x --without-x11-driver --without-ggi-driver --without-svga-driver --with-aa-driver 
-make
+%configure2_5x --without-x11-driver --with-aa-driver 
+%make
 mv bin/xaos ./xaos-aalib
 BUILD_TAG=yes
 %endif
 
-%if %{build_svgalib}
 [[ -n "$BUILD_TAG" ]] && { make clean; BUILD_TAG=""; }
 rm -f config.cache
-%configure2_5x --without-x11-driver --without-ggi-driver --with-svga-driver --without-aa-driver 
-make
-mv bin/xaos ./xaos-svgalib
-BUILD_TAG=yes
-%endif
-
-[[ -n "$BUILD_TAG" ]] && { make clean; BUILD_TAG=""; }
-rm -f config.cache
-%configure2_5x --with-x11-driver --without-ggi-driver --without-svga-driver --without-aa-driver
-make
+%configure2_5x --with-x11-driver --without-aa-driver
+%make
 
 %install
 rm -rf %{buildroot}
@@ -89,9 +71,6 @@ mkdir -p %{buildroot}%{_infodir}
 
 %if %{build_aalib}
 install -m755 xaos-aalib %{buildroot}%{_bindir}
-%endif
-%if %{build_svgalib}
-install -m755 xaos-svgalib %{buildroot}%{_bindir}
 %endif
 install -m644 help/xaos.hlp %{buildroot}%{_datadir}/XaoS/catalogs
 
@@ -144,13 +123,6 @@ rm -rf %{buildroot}
 %{_miconsdir}/%{name}.xpm
 %{_iconsdir}/%{name}.xpm
 %{_liconsdir}/%{name}.xpm
-
-%if %{build_svgalib}
-%files svgalib
-%defattr(-,root,root,0755)
-%doc COPYING 
-%{_bindir}/xaos-svgalib
-%endif
 
 %if %{build_aalib}
 %files aalib
