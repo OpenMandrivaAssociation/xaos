@@ -1,0 +1,19 @@
+--- xaos-3.5/src/ui-hlp/render.c~	2009-07-18 01:50:39.000000000 +0200
++++ xaos-3.5/src/ui-hlp/render.c	2009-07-21 13:23:43.000000000 +0200
+@@ -605,14 +605,14 @@
+ 	printmsg(gettext("Loading catalogs"));
+ 	uih_loadcatalog(uih, "english");
+ 	if (uih->errstring) {
+-	    fprintf(stderr, uih->errstring);
++	    fprintf(stderr, "%s", uih->errstring);
+ 	    uih_clearmessages(uih);
+ 	    uih->errstring = NULL;
+ 	}
+ 	if (catalog != NULL)
+ 	    uih_loadcatalog(uih, catalog);
+ 	if (uih->errstring) {
+-	    fprintf(stderr, uih->errstring);
++	    fprintf(stderr, "%s", uih->errstring);
+ 	    uih_clearmessages(uih);
+ 	    uih->errstring = NULL;
+ 	}
