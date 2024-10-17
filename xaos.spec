@@ -21,7 +21,7 @@ Source0:	http://downloads.sourceforge.net/sourceforge/%{name}/%{name}-%{version}
 Source10:	%{name}.16.xpm
 Source11:	%{name}.32.xpm
 Source12:	%{name}.48.xpm
-URL:		http://xaos.theory.org/
+URL:		https://xaos.theory.org/
 Obsoletes:	XaoS < %{version}-%{release}
 Provides:	XaoS = %{version}-%{release}
 Obsoletes:	%{name}-svgalib < %{epoch}:%{version}-%{release}
